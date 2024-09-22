@@ -5,6 +5,41 @@
 var express = require('express');
 var app = express();
 
+
+// Route to handle the date parameter
+app.get('/api/:date?', (req, res) => {
+  let dateString = req.params.date;
+  
+  //use the current date, if date is not provided
+  if (!dateString) {
+    const currentDate = new Date();
+    res.json({
+      unix: currentDate.getTime(),
+      utc: currentDate.toUTCString()
+    });
+  } else {
+    // treat as a unix timestamp, if dateString is a number
+    if (!isNaN(dateString)) {
+      dateString = parseInt(dateString);
+    }
+    
+    const date = new Date(dateString);
+    
+    if (date.toString() === "Invalid Date") {
+      res.json({ error: "Invalid Date" });
+    } else {
+      res.json({
+        unix: date.getTime(),
+        utc: date.toUTCString()
+      });
+    }
+  }
+});
+
+
+  
+
+  
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
 var cors = require('cors');
